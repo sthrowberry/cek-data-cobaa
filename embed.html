@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: transparent;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 2px solid #1e88e5;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: #222;
+    }
+
+    .desc {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 16px;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input {
+      padding: 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 12px;
+      background: #1e40ff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #hasil {
+      margin-top: 20px;
+      padding: 14px;
+      background: #f9f9f9;
+      border-left: 5px solid #1e88e5;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .progress {
+      margin-top: 20px;
+    }
+
+    .progress-item {
+      background: #e3f2fd;
+      padding: 14px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .progress-item small {
+      display: block;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .progress-item span {
+      font-weight: bold;
+      color: #0d47a1;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        max-width: 800px;
+      }
+
+      .form {
+        flex-direction: row;
+      }
+
+      button {
+        width: 120px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Cek Status Permintaan Data</h1>
+
+    <p class="desc">
+      Masukkan nomor ID yang telah dikirim melalui email
+    </p>
+
+    <div class="form">
+      <input type="text" id="idInput" placeholder="Masukkan ID">
+      <button onclick="cariData()">Cari</button>
+    </div>
+
+    <div id="hasil"></div>
+
+    <div class="progress">
+      <div class="progress-item">
+        <div>
+          <strong>Penyerahan</strong>
+          <small>Dokumen yang diminta telah dikirim melalui email</small>
+        </div>
+        <span>6/6</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const url = "https://opensheet.elk.sh/AKfycbx2TfC2ku3kqQA7xk_hJ8-a3UCUzVSeS02-tkV3D4GgaFcIqMBtQzMT3-p0tCJauKNS/Sheet1";
+
+    async function cariData() {
+      const id = document.getElementById("idInput").value;
+      const hasil = document.getElementById("hasil");
+
+      hasil.innerHTML = "Mencari data...";
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const found = data.find(item => item.ID === id);
+
+        if (found) {
+          hasil.innerHTML = `
+            <p><b>Nama:</b> ${found.Nama}</p>
+            <p><b>Status:</b> ${found.Status}</p>
+            <p><b>Keterangan:</b> ${found.Keterangan}</p>
+          `;
+        } else {
+          hasil.innerHTML = "❌ ID tidak ditemukan";
+        }
+
+      } catch (err) {
+        hasil.innerHTML = "⚠️ Gagal mengambil data";
+        console.error(err);
+      }
+    }
+  </script>
+
+</body>
+</html>
